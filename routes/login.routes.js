@@ -5,6 +5,6 @@ import { login } from "../controllers/login.controllers.js"
 const router = Router();
 
 /* Testing requests and responses with nodemon */
-router.get("/login", login);
+router.post("/login", login);
 
 export default router;
