@@ -14,8 +14,8 @@ export const getUser = async (req, res) => {
         values: [req.params.id],
     };
     const data = await sql.query(query);
-    console.log(data.rows);
-    res.json(data.rows);
+    console.log(data.rows[0]);
+    res.json(data.rows[0]);
 };
 
 export const postUser = async (req, res) => {
@@ -30,11 +30,11 @@ export const postUser = async (req, res) => {
 };
 
 export const putUser = async (req, res) => {
-    const {username, first_name, last_name, password} = req.body;
+    const {username, first_name, last_name, password, points} = req.body;
     const sql = await connectDB();
     const query = {
-        text: "UPDATE users set username = $1, first_name = $2, last_name = $3, password = $4 WHERE user_id = $5",
-        values: [username, first_name, last_name, password, req.params.id],
+        text: "UPDATE users set username = $1, first_name = $2, last_name = $3, password = $4, points = $5 WHERE user_id = $6",
+        values: [username, first_name, last_name, password, points, req.params.id],
     };
     const data = await sql.query(query);
     res.send("User Updated");
