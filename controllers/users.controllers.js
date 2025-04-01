@@ -1,4 +1,5 @@
 import connectDB from '../dataBase/aiven.js';
+import { getSalt, hashPassword} from "../dataBase/hash.js";
 
 export const getUsers = async (req, res) => {
     const sql = await connectDB();
@@ -20,10 +21,13 @@ export const getUser = async (req, res) => {
 
 export const postUser = async (req, res) => {
     const {username, first_name, last_name, password} = req.body;
+    const salt = getSalt();
+    const hash = hashPassword(password, salt);
+    const saltedHash = salt + hash;
     const sql = await connectDB();
     const query = {
         text: "INSERT INTO users(username, first_name, last_name, password) VALUES($1, $2, $3, $4)",
-        values: [username, first_name, last_name, password],
+        values: [username, first_name, last_name, saltedHash],
     };
     const data = await sql.query(query);
     res.send("User Added");
@@ -31,10 +35,13 @@ export const postUser = async (req, res) => {
 
 export const putUser = async (req, res) => {
     const {username, first_name, last_name, password, points} = req.body;
+    const salt = getSalt();
+    const hash = hashPassword(password, salt);
+    const saltedHash = salt + hash;
     const sql = await connectDB();
     const query = {
         text: "UPDATE users set username = $1, first_name = $2, last_name = $3, password = $4, points = $5 WHERE user_id = $6",
-        values: [username, first_name, last_name, password, points, req.params.id],
+        values: [username, first_name, last_name, saltedHash, points, req.params.id],
     };
     const data = await sql.query(query);
     res.send("User Updated");
